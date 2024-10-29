@@ -1,5 +1,5 @@
+const fs = require('fs')
 
-// const fs = require('fs')
 async function getRss() {
     const url = "https://rssreader.65515107.xyz/api/reader/rss?all=1&star=0&search=%E5%90%84%E5%A4%A7%E9%93%B6%E8%A1%8C%E6%B4%BB%E5%8A%A8%E5%88%86%E4%BA%AB%EF%BC%8C%E5%A5%BD%E7%94%A8%E5%85%B3%E6%B3%A8%E6%8E%A8%E8%8D%90&inserttime=0&t=1730079799604";
     const data = await fetch(url).then(response => response.json())
@@ -11,7 +11,8 @@ async function getRss() {
         return {
             title: d.title,
             content: content,
-            time: time.toISOString().split('T')[0].replace(/-/g, '')
+            time: time.toISOString().split('T')[0],
+            inserttime: d.inserttime
         }
     })
 
@@ -41,6 +42,8 @@ const CLOSE_INDEX = 19;
 const reg = /^(.+)?（.+?）$/
 async function parseData(data) {
     //let banks = [];
+    let items = [];
+    let times = [];
     for (let i = 0; i < data.length; i++) {
         const dd = data[i];
         // console.log(dd)
@@ -67,38 +70,44 @@ async function parseData(data) {
         ct.forEach(c => {
             c.open = c.index <= CLOSE_INDEX;
         });
+        times.push(dd.time);
         ct = {
             title: dd.title,
             time: dd.time,
             contents: ct
         }
         // console.info(ct);
-        const fs = require('fs')
-        fs.writeFileSync(`./html/${dd.time}.json`, JSON.stringify(ct, null, 2));
+        // const fs = require('fs')
+        // fs.writeFileSync(`./html/${dd.time}.json`, JSON.stringify(ct, null, 2));
         // fs.writeFileSync('./html/banks.json', JSON.stringify(banks));
-        toHtmlFull(ct);
-        await uploadJson(ct, dd.time);
-
+        const html = toHtmlFull(ct);
+        //await uploadJson(ct, dd.time);
+        items.push({
+            guid: dd.time,
+            title: dd.title,
+            link: `./html/${dd.time}.html`,
+            pubDate: new Date(dd.inserttime).toISOString(),
+            description:html
+        });
     }
-
-}
-
-async function uploadJson(json, time) {
-    for (let i = 0; i < json.length; i++) {
-        try {
-            let res = await fetch(`https://r2object.65515107.xyz/banks/${time}.json`, {
-                "body": JSON.stringify(json),
-                "method": "POST",
-            })
-            console.info(await res.text())
-            return;
-        } catch (error) {
-            console.log(error)
-            await sleep(2000);
+    let json = {
+        rss:{
+            channel:{
+                title:"各大银行活动分享",
+                link:"./html/index.html",
+                lastBuildDate:new Date().toISOString(),
+                description:"各大银行活动分享" + " RSS",
+                language:"zh-cn",
+                item:items
+            }
         }
     }
+    const h = times.map(t=>`<div><a href="./${t}.html">${t}</a></div>`);
+    fs.writeFileSync("./html/index.html",h.join("\n"));
+    fs.writeFileSync('./html/rss.json',JSON.stringify(json));
 
 }
+
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -151,8 +160,8 @@ function toHtmlFull(dd) {
     const datas = group(dd.contents);
     const htmls = datas.map(d => toHtml(d));
     const fullHtml = `<h1>${dd.title}</h1>\n` + htmls.join('\n\n')
-    const fs = require('fs')
+
     fs.writeFileSync(`./html/${dd.time}.html`, fullHtml)
-    return;
+    return fullHtml;
 }
 
