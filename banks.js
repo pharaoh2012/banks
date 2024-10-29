@@ -78,14 +78,14 @@ async function parseData(data) {
         }
         // console.info(ct);
         // const fs = require('fs')
-        // fs.writeFileSync(`https://pharaoh2012.github.io/banks/html/${dd.time}.json`, JSON.stringify(ct, null, 2));
-        // fs.writeFileSync('https://pharaoh2012.github.io/banks/html/banks.json', JSON.stringify(banks));
+        // fs.writeFileSync(`https://pharaoh2012.github.io/banks/${dd.time}.json`, JSON.stringify(ct, null, 2));
+        // fs.writeFileSync('https://pharaoh2012.github.io/banks/banks.json', JSON.stringify(banks));
         const html = toHtmlFull(ct);
         //await uploadJson(ct, dd.time);
         items.push({
             guid: dd.time,
             title: dd.title,
-            link: `https://pharaoh2012.github.io/banks/html/${dd.time}.html`,
+            link: `https://pharaoh2012.github.io/banks/${dd.time}.html`,
             pubDate: new Date(dd.inserttime).toISOString(),
             description: html
         });
@@ -94,7 +94,7 @@ async function parseData(data) {
         rss: {
             channel: {
                 title: "各大银行活动分享",
-                link: "https://pharaoh2012.github.io/banks/html/index.html",
+                link: "https://pharaoh2012.github.io/banks/index.html",
                 lastBuildDate: new Date().toISOString(),
                 description: "各大银行活动分享" + " RSS",
                 language: "zh-cn",
