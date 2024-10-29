@@ -78,33 +78,33 @@ async function parseData(data) {
         }
         // console.info(ct);
         // const fs = require('fs')
-        // fs.writeFileSync(`./html/${dd.time}.json`, JSON.stringify(ct, null, 2));
-        // fs.writeFileSync('./html/banks.json', JSON.stringify(banks));
+        // fs.writeFileSync(`https://pharaoh2012.github.io/banks/html/${dd.time}.json`, JSON.stringify(ct, null, 2));
+        // fs.writeFileSync('https://pharaoh2012.github.io/banks/html/banks.json', JSON.stringify(banks));
         const html = toHtmlFull(ct);
         //await uploadJson(ct, dd.time);
         items.push({
             guid: dd.time,
             title: dd.title,
-            link: `./html/${dd.time}.html`,
+            link: `https://pharaoh2012.github.io/banks/html/${dd.time}.html`,
             pubDate: new Date(dd.inserttime).toISOString(),
-            description:html
+            description: html
         });
     }
     let json = {
-        rss:{
-            channel:{
-                title:"各大银行活动分享",
-                link:"./html/index.html",
-                lastBuildDate:new Date().toISOString(),
-                description:"各大银行活动分享" + " RSS",
-                language:"zh-cn",
-                item:items
+        rss: {
+            channel: {
+                title: "各大银行活动分享",
+                link: "https://pharaoh2012.github.io/banks/html/index.html",
+                lastBuildDate: new Date().toISOString(),
+                description: "各大银行活动分享" + " RSS",
+                language: "zh-cn",
+                item: items
             }
         }
     }
-    const h = times.map(t=>`<div><a href="./${t}.html">${t}</a></div>`);
-    fs.writeFileSync("./html/index.html",h.join("\n"));
-    fs.writeFileSync('./html/rss.json',JSON.stringify(json));
+    const h = times.map(t => `<div><a href="./${t}.html">${t}</a></div>`);
+    fs.writeFileSync("./html/index.html", h.join("\n"));
+    fs.writeFileSync('./html/rss.json', JSON.stringify(json, null, 2));
 
 }
 
