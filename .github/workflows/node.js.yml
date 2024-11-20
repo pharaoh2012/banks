@@ -4,8 +4,8 @@
 name: Node.js CI
 
 on:
-  schedule:
-    - cron: '30 1-14 * * *'  # 每小时执行一次
+  # schedule:
+  #   - cron: '30 1-14 * * *'  # 每小时执行一次
   # push:
   #   branches: [ "master" ]
   # pull_request:
